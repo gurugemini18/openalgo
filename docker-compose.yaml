@@ -21,13 +21,6 @@ services:
       - openalgo_tmp:/app/tmp
 
     environment:
-      # ── Coolify magic variables ──────────────────────────────
-      # Generates an HTTPS domain for EACH exposed port.
-      # After first deploy, set your real custom domains in the
-      # "Domains" tab of this resource in the Coolify UI.
-      - SERVICE_FQDN_OPENALGO_5000
-      - SERVICE_FQDN_OPENALGO_8765
-
       # ── Core Flask settings ──────────────────────────────────
       - FLASK_HOST_IP=0.0.0.0
       - FLASK_PORT=5000
