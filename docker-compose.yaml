@@ -45,11 +45,6 @@ services:
       # broker slug, no trailing slash).
       - REDIRECT_URL=${REDIRECT_URL}
 
-      # Comma-separated list of broker slugs you actually use
-      # e.g. zerodha,angel,dhan  — must include whatever slug
-      # you used in REDIRECT_URL above.
-      - VALID_BROKERS=${VALID_BROKERS:-zerodha}
-
       # ── WebSocket settings ────────────────────────────────────
       - WEBSOCKET_HOST=0.0.0.0
       - WEBSOCKET_PORT=8765
