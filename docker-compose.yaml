@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
 
     # NOTE: no "container_name" — let Coolify manage container naming
-    # NOTE: no "ports:" mapping — Traefik (Coolify's proxy) will route
+    # NOTE: no "ports:" mapping — Traefik (Coolify's proxy) routes
     # traffic internally to the ports declared below via "expose"
 
     expose:
@@ -22,10 +22,9 @@ services:
 
     environment:
       # ── Coolify magic variables ──────────────────────────────
-      # These tell Coolify/Traefik to generate an HTTPS domain for
-      # EACH port. After first deploy, replace the auto-generated
-      # sslip.io domains with your own custom domain in the
-      # "Domains" section of this resource in the Coolify UI.
+      # Generates an HTTPS domain for EACH exposed port.
+      # After first deploy, set your real custom domains in the
+      # "Domains" tab of this resource in the Coolify UI.
       - SERVICE_FQDN_OPENALGO_5000
       - SERVICE_FQDN_OPENALGO_8765
 
@@ -36,8 +35,20 @@ services:
       - FLASK_DEBUG=${FLASK_DEBUG:-0}
       - TZ=Asia/Kolkata
 
-      # ── IMPORTANT: must exactly match your custom domain ─────
+      # ── Must exactly match your custom domain ────────────────
       - HOST_SERVER=${HOST_SERVER}
+
+      # ── OAuth redirect — MUST end with /<broker>/callback ────
+      # Example: https://openalgo.yourdomain.com/zerodha/callback
+      # This same URL must also be registered in your broker's
+      # developer/app console, exactly matching (scheme, domain,
+      # broker slug, no trailing slash).
+      - REDIRECT_URL=${REDIRECT_URL}
+
+      # Comma-separated list of broker slugs you actually use
+      # e.g. zerodha,angel,dhan  — must include whatever slug
+      # you used in REDIRECT_URL above.
+      - VALID_BROKERS=${VALID_BROKERS:-zerodha}
 
       # ── WebSocket settings ────────────────────────────────────
       - WEBSOCKET_HOST=0.0.0.0
@@ -51,12 +62,20 @@ services:
       # ── Database ──────────────────────────────────────────────
       - DATABASE_URL=sqlite:///db/openalgo.db
 
-      # ── Security keys — set real values in Coolify's           
-      #    "Environment Variables" tab, never commit them to git ─
+      # ── Security keys ─────────────────────────────────────────
+      # NEVER change APP_KEY/API_KEY_PEPPER/FERNET_SALT once set
+      # on a live install with existing users/broker logins —
+      # doing so makes existing password hashes / encrypted
+      # broker tokens permanently unrecoverable.
       - APP_KEY=${APP_KEY}
       - API_KEY_PEPPER=${API_KEY_PEPPER}
+      - FERNET_SALT=${FERNET_SALT}
 
-      # ── Broker API credentials — set in Coolify UI ───────────
+      # ── Config version tracker (bump only when app requires it,
+      #    per the "CONFIGURATION UPDATE REQUIRED" startup banner) ─
+      - ENV_CONFIG_VERSION=${ENV_CONFIG_VERSION:-1.0.7}
+
+      # ── Broker API credentials ────────────────────────────────
       - BROKER_API_KEY=${BROKER_API_KEY}
       - BROKER_API_SECRET=${BROKER_API_SECRET}
       # Uncomment if your broker needs separate market-data creds
