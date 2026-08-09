@@ -57,7 +57,6 @@ services:
       # broker tokens permanently unrecoverable.
       - APP_KEY=${APP_KEY}
       - API_KEY_PEPPER=${API_KEY_PEPPER}
-      - FERNET_SALT=${FERNET_SALT}
 
       # ── Config version tracker (bump only when app requires it,
       #    per the "CONFIGURATION UPDATE REQUIRED" startup banner) ─
