@@ -12,7 +12,6 @@ services:
       - openalgo_strategies:/app/strategies
       - openalgo_keys:/app/keys
       - openalgo_tmp:/app/tmp
-      - ./.env:/app/.env
 
     environment:
       # Core Flask
